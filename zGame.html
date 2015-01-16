@@ -6,11 +6,11 @@
         <link rel="stylesheet" href="zGame.css" />
     </head>
     <body>
-        <h1>Zombie</h1>
+        <h1>Zombie Survival Game</h1>
 
         <p>Run away from the zombie...and move with the Arrow Keys! CLICK to start...</p>
 
-        <canvas id="space-scene" width="512" height="512">
+        <canvas id="space-scene" width="724" height="724">
             Sorry, your web browser does not appear to support
             the <code>canvas</code> element, either.
         </canvas>
@@ -37,6 +37,7 @@
             #endif
 
             attribute vec3 vertexPosition;
+
             attribute vec3 vertexDiffuseColor;
             attribute vec3 vertexSpecularColor;
             attribute vec3 normalVector;
@@ -47,6 +48,7 @@
             varying vec3 fragmentNormal;
             varying vec3 fragmentEye;
             varying vec3 fragmentLight;
+
             uniform vec4 lightPosition;
 
             uniform mat4 rotationMatrix; 
@@ -81,15 +83,19 @@
             precision highp float;
             #endif
 
+      //      attribute vec2 aTextureCoord;                    ///Texture
+
             varying vec3 fragmentDiffuseColor;
             varying vec3 fragmentSpecularColor;
             varying vec3 fragmentNormal;
             varying vec3 fragmentEye;
             varying vec3 fragmentLight;
+    //        varying highp vec2 vTextureCoord;                 //Texture
 
             // Color settings come in here now.
             uniform vec3 lightDiffuse;
             uniform vec3 lightSpecular;
+   //         uniform sampler2D uSampler;                     //Texture
 
             // Now with shininess!
             uniform float shininess;
@@ -119,16 +125,17 @@
                 if (dot(l, n) < 0.0) {
                     finalSpecular = vec3(0.0, 0.0, 0.0);
                 }
-                
+                /**********************************************/
                 // .rgb suffix not really necessary, but included for emphasis.
-                gl_FragColor = vec4(finalDiffuse.rgb + finalSpecular.rgb, 1.0);
+                gl_FragColor = vec4(finalDiffuse.rgb + finalSpecular.rgb, 1.0); //texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t)); //
             }
         </script>
         <!-- Implement a vector library of function -->
-        <script src="../pipeline/matrix4x4/vector/vector.js"></script>
+        <script src="../Zombie_Game/matrix4x4/vector/vector.js"></script>
         <!-- Set up matrix library -->
-        <script src="../pipeline/matrix4x4/matrix4x4.js"></script>
+        <script src="../Zombie_Game/matrix4x4/matrix4x4.js"></script>
         <!-- This script sets up the specific scene for this page. -->
         <script src="zGame.js"></script>
   </body>
 </html>
+
