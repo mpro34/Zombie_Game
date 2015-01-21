@@ -511,7 +511,7 @@
             }           
         }; 
         passSubVerts(objectsToDraw);
-        passSubVerts(subArray);
+        passSubVerts(subArray);//******Needs to be taken out and implemented another way.
 		/*ABOVE: Find another way to pass verticies and colors of subshapes.*/
 /*****************************************************************************************************/
     // Initialize the shaders.
