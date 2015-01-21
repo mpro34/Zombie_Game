@@ -460,7 +460,7 @@
             }
         }*/
     ];
-
+/*****************************************************************************************************/
     // Pass the vertices and colors to WebGL.
         passSubVerts = function (composites) {
             for (i = 0, maxi = composites.length; i < maxi; i += 1) {
@@ -512,7 +512,8 @@
         }; 
         passSubVerts(objectsToDraw);
         passSubVerts(subArray);
-
+		/*ABOVE: Find another way to pass verticies and colors of subshapes.*/
+/*****************************************************************************************************/
     // Initialize the shaders.
     shaderProgram = GLSLUtilities.initSimpleShaderProgram(
         gl,
@@ -613,7 +614,7 @@
                 new Matrix4x4().toWebGLArray()
             )
         );
-
+/*****************************************************************************************************/
         // Set the varying normal vectors.
         gl.bindBuffer(gl.ARRAY_BUFFER, object.normalBuffer);
         gl.vertexAttribPointer(normalVector, 3, gl.FLOAT, false, 0, 0);
@@ -623,7 +624,8 @@
         gl.vertexAttribPointer(vertexPosition, 3, gl.FLOAT, false, 0, 0);
         gl.drawArrays(object.mode, 0, object.vertices.length / 3);
     };
-
+	/*ABOVE: Normal array property for each object. Line 470 JD Comment
+/*****************************************************************************************************/
   /*  function initTextures() {
   cubeTexture = gl.createTexture();
   cubeImage = new Image();
@@ -641,7 +643,20 @@ function handleTextureLoaded(image, texture) {
   gl.generateMipmap(gl.TEXTURE_2D);
   gl.bindTexture(gl.TEXTURE_2D, null);
 }*/
-
+        // Display the objects. Now accounts for an arbitrary tree of subshapes with recursion.
+    drawSubshapes = function (composites) {        
+        for (i = 0; i < composites.length; ++i) {
+        //    console.log("i-limit: ",composites.length); 
+       //     console.log("i", i);
+       //     console.log("com_len", composites[i].transforms.scale.x);
+            drawObject(composites[i]);
+            if (composites[i].subshapes) {
+                drawSubshapes(composites[i].subshapes);
+                //drawArray = drawArray.concat(composites[i].subshapes);
+            }
+     //       console.log("hereIII: ", i)
+        } 
+    }; 
 
     /*
      * Displays the scene.
@@ -666,7 +681,7 @@ function handleTextureLoaded(image, texture) {
                 Matrix4x4.frustum(5, -3, -5, 5, 10, 1000).toWebGLArray()
             )
         );
-
+/*
           cubeVerticesTextureCoordBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, cubeVerticesTextureCoordBuffer);
   
@@ -705,23 +720,8 @@ function handleTextureLoaded(image, texture) {
 
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoordinates),
                 gl.STATIC_DRAW);
+*/
 
-        // Display the objects. Now accounts for an arbitrary tree of subshapes with recursion.
-        drawSubshapes = function (composites) {        
-
-            for (i = 0; i < composites.length; ++i) {
-            //    console.log("i-limit: ",composites.length); 
-           //     console.log("i", i);
-           //     console.log("com_len", composites[i].transforms.scale.x);
-                drawObject(composites[i]);
-
-                if (composites[i].subshapes) {
-                    drawSubshapes(composites[i].subshapes);
-                    //drawArray = drawArray.concat(composites[i].subshapes);
-                }
-         //       console.log("hereIII: ", i)
-            } 
-        }; 
         drawSubshapes(objectsToDraw);
       //  console.log("OtD", objectsToDraw[12]);
         //drawSubshapes(drawArray);
