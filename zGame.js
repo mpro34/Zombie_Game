@@ -126,13 +126,13 @@
             color: { r: 0.0, g: 0.5, b: 0.0 },
             specularColor: { r: 1.0, g: 0.0, b: 0.0 },
             shininess: 25,  
-            vertices: Shapes.toRawTriangleArray(Shapes.sphere()),
-            normals: Shapes.toVertexNormalArray(Shapes.sphere()),
+            vertices: Shapes.toRawTriangleArray(Shapes.hexahedron()),
+            normals: Shapes.toVertexNormalArray(Shapes.hexahedron()),
             mode: gl.TRIANGLES,
             transforms: {
                 trans: { x: zombieX, y: 1.5, z: zombieZ },         
                 scale: { x: 2.0, y: 2.0, z: 2.0 }
-            }/*,
+            },
             subshapes: [
             //Zombie Head
                 // JD: So here, you did find *a* solution to being able to
@@ -271,7 +271,8 @@
      //createWallSegment(50.0, 0.0, -0.6, 1.0, 15.0, 175.0, 1.0, 0.0, 0.0),  //Right Wall
 
 
-        createZombie(0.0, -10.0)          
+        createZombie(0.0, -10.0),          
+		createZombie(10.0, -10.0)
     ];
 /*****************************************************************************************************/
                 // JD: Nice catch for avoiding normal vector errors, but at a cost---
@@ -317,12 +318,13 @@
                 }
             //Recursively pass the vertices of the subshapes.
                 if (objects[i].subshapes) {
-                    passVerticies(objects[i]);
+					console.log("VERTICIES PASSED? " + objects[i].subshapes);
+                    passVerticies(objects[i].subshapes);
                 }
             }    
         };
 	//******Needs to be taken out and implemented another way.
-	passVerticies(objectsToDraw)
+	    passVerticies(objectsToDraw)
 		/*ABOVE: Find another way to pass verticies and colors of subshapes.*/
 /*****************************************************************************************************/
     // Initialize the shaders.
@@ -392,9 +394,9 @@
     drawObject = function (object) { 
     // Set the varying colors.
         gl.bindBuffer(gl.ARRAY_BUFFER, object.colorBuffer);
-        gl.vertexAttribPointer(vertexDiffuseColor, 3, gl.FLOAT, false, 0, 0);
+        gl.vertexAttribPointer(vertexDiffuseColor, 3, gl.FLOAT, false, 0, 0); //HERE
         gl.bindBuffer(gl.ARRAY_BUFFER, object.specularBuffer);
-        gl.vertexAttribPointer(vertexSpecularColor, 3, gl.FLOAT, false, 0, 0);
+        gl.vertexAttribPointer(vertexSpecularColor, 3, gl.FLOAT, false, 0, 0);  //HERE
         // Set the shininess.
         gl.uniform1f(shininess, object.shininess);
 /*
@@ -435,11 +437,11 @@
 /*****************************************************************************************************/
         // Set the varying normal vectors.
         gl.bindBuffer(gl.ARRAY_BUFFER, object.normalBuffer);
-        gl.vertexAttribPointer(normalVector, 3, gl.FLOAT, false, 0, 0);
+        gl.vertexAttribPointer(normalVector, 3, gl.FLOAT, false, 0, 0);  //HERE
 
         // Set the varying vertex coordinates.
         gl.bindBuffer(gl.ARRAY_BUFFER, object.buffer);
-        gl.vertexAttribPointer(vertexPosition, 3, gl.FLOAT, false, 0, 0);
+        gl.vertexAttribPointer(vertexPosition, 3, gl.FLOAT, false, 0, 0);  //HERE
 /*Constructs a sequence of geometric primitives by successively transferring elements
 	first through first + count − 1 of each enabled array to the GL.*/
         gl.drawArrays(object.mode, 0, object.vertices.length/3);
@@ -464,11 +466,15 @@ function handleTextureLoaded(image, texture) {
   gl.bindTexture(gl.TEXTURE_2D, null);
 }*/
         // Display the objects. Now accounts for an arbitrary tree of subshapes with recursion.
-    drawSubshapes = function (objects) {        
-        for (i = 0; i < objects.length; ++i) {
-            drawObject(objects[i]);
+    drawSubshapes = function (objects) {   
+        for (i = 0; i < objects.length; ++i) {    
+			drawObject(objects[i]);			
             if (objects[i].subshapes) {
-                drawSubshapes(objects[i].subshapes);
+				console.log("Subs!");
+				console.log(objects[i].subshapes.trans);
+                drawObject(objects[i].subshapes);
+				console.log(objects[i].subshapes);
+              //  drawSubshapes(objects[i].subshapes);
             }
         } 
     }; 
