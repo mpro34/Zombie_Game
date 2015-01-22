@@ -132,7 +132,7 @@
             transforms: {
                 trans: { x: zombieX, y: 1.5, z: zombieZ },         
                 scale: { x: 2.0, y: 2.0, z: 2.0 }
-            },
+            }/*,
             subshapes: [
             //Zombie Head
                 // JD: So here, you did find *a* solution to being able to
@@ -274,54 +274,55 @@
         createZombie(0.0, -10.0)          
     ];
 /*****************************************************************************************************/
-    // Pass the vertices and colors to WebGL.
-            for (i = 0, maxi = objectsToDraw.length; i < maxi; i += 1) {
-                objectsToDraw[i].buffer = GLSLUtilities.initVertexBuffer(gl,
-                    objectsToDraw[i].vertices);
-            //Create the default normal array in case of no lighting variables for current object.
                 // JD: Nice catch for avoiding normal vector errors, but at a cost---
                 //     most of your scene is not lit at all!  And to think that the
                 //     fix for this would be a single additional line per object.
                 //     (or less if you wrote a function like createWallSegment)
-                for (k = 0; maxk = objectsToDraw[i].vertices.length, k < maxk; k += 1) {
+    // Pass the vertices and colors to WebGL.
+		var passVerticies = function(objects) {
+            for (i = 0, maxi = objects.length; i < maxi; i += 1) {
+                objects[i].buffer = GLSLUtilities.initVertexBuffer(gl,
+                    objects[i].vertices);
+            //Create the default normal array in case of no lighting variables for current object.
+                for (k = 0; maxk = objects[i].vertices.length, k < maxk; k += 1) {
                     normalArray.push(0.5);
                 }
             //If we have a single color, we expand that into an array of the same color over and over.
-                if (!objectsToDraw[i].colors) {
-                    objectsToDraw[i].colors = [];
-                    for (j = 0, maxj = objectsToDraw[i].vertices.length / 3; j < maxj; j += 1) {
-                        objectsToDraw[i].colors = objectsToDraw[i].colors.concat(
-                            objectsToDraw[i].color.r,
-                            objectsToDraw[i].color.g,
-                            objectsToDraw[i].color.b
+                if (!objects[i].colors) {
+                    objects[i].colors = [];
+                    for (j = 0, maxj = objects[i].vertices.length / 3; j < maxj; j += 1) {
+                        objects[i].colors = objects[i].colors.concat(
+                            objects[i].color.r,
+                            objects[i].color.g,
+                            objects[i].color.b
                         );
                     }
                 }  
-                objectsToDraw[i].colorBuffer = GLSLUtilities.initVertexBuffer(gl,
-                    objectsToDraw[i].colors);
-                
+                objects[i].colorBuffer = GLSLUtilities.initVertexBuffer(gl,
+                    objects[i].colors);              
             //Same trick as above.
-                if (!objectsToDraw[i].specularColors) {
-                    objectsToDraw[i].specularColors = [];      
-                    for (j = 0, maxj = objectsToDraw[i].vertices.length / 3; j < maxj; j += 1) {
-                        objectsToDraw[i].specularColors = objectsToDraw[i].specularColors.concat(
-                            (objectsToDraw[i].specularColor ? objectsToDraw[i].specularColor.r : 1.0),
-                            (objectsToDraw[i].specularColor ? objectsToDraw[i].specularColor.g : 1.0),
-                            (objectsToDraw[i].specularColor ? objectsToDraw[i].specularColor.b : 1.0)
+                if (!objects[i].specularColors) {
+                    objects[i].specularColors = [];      
+                    for (j = 0, maxj = objects[i].vertices.length / 3; j < maxj; j += 1) {
+                        objects[i].specularColors = objects[i].specularColors.concat(
+                            (objects[i].specularColor ? objects[i].specularColor.r : 1.0),
+                            (objects[i].specularColor ? objects[i].specularColor.g : 1.0),
+                            (objects[i].specularColor ? objects[i].specularColor.b : 1.0)
                         );
                     }
-                    objectsToDraw[i].specularBuffer = GLSLUtilities.initVertexBuffer(gl,
-                        objectsToDraw[i].specularColors);
-                    objectsToDraw[i].normalBuffer = GLSLUtilities.initVertexBuffer(gl,
-                        (objectsToDraw[i].normals ? objectsToDraw[i].normals : normalArray)); 
+                    objects[i].specularBuffer = GLSLUtilities.initVertexBuffer(gl,
+                        objects[i].specularColors);
+                    objects[i].normalBuffer = GLSLUtilities.initVertexBuffer(gl,
+                        (objects[i].normals ? objects[i].normals : normalArray)); 
                 }
-
-            //Save subshapes to be processed after all of the standard objects.
-                if (objectsToDraw[i].subshapes) {
-                    subArray = subArray.concat(objectsToDraw[i].subshapes);
+            //Recursively pass the vertices of the subshapes.
+                if (objects[i].subshapes) {
+                    passVerticies(objects[i]);
                 }
-            }           
+            }    
+        };
 	//******Needs to be taken out and implemented another way.
+	passVerticies(objectsToDraw)
 		/*ABOVE: Find another way to pass verticies and colors of subshapes.*/
 /*****************************************************************************************************/
     // Initialize the shaders.
@@ -439,7 +440,9 @@
         // Set the varying vertex coordinates.
         gl.bindBuffer(gl.ARRAY_BUFFER, object.buffer);
         gl.vertexAttribPointer(vertexPosition, 3, gl.FLOAT, false, 0, 0);
-        gl.drawArrays(object.mode, 0, object.vertices.length / 3);
+/*Constructs a sequence of geometric primitives by successively transferring elements
+	first through first + count − 1 of each enabled array to the GL.*/
+        gl.drawArrays(object.mode, 0, object.vertices.length/3);
     };
 	/*ABOVE: Normal array property for each object. Line 470 JD Comment
 /*****************************************************************************************************/
@@ -463,15 +466,10 @@ function handleTextureLoaded(image, texture) {
         // Display the objects. Now accounts for an arbitrary tree of subshapes with recursion.
     drawSubshapes = function (objects) {        
         for (i = 0; i < objects.length; ++i) {
-        //    console.log("i-limit: ",composites.length); 
-       //     console.log("i", i);
-       //     console.log("com_len", composites[i].transforms.scale.x);
             drawObject(objects[i]);
             if (objects[i].subshapes) {
                 drawSubshapes(objects[i].subshapes);
-                //drawArray = drawArray.concat(objects[i].subshapes);
             }
-     //       console.log("hereIII: ", i)
         } 
     }; 
 
