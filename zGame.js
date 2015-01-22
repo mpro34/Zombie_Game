@@ -132,10 +132,7 @@
             transforms: {
                 trans: { x: zombieX, y: 1.5, z: zombieZ },         
                 scale: { x: 2.0, y: 2.0, z: 2.0 }
-            }
-
-            /*,
-
+            },
             subshapes: [
             //Zombie Head
                 // JD: So here, you did find *a* solution to being able to
@@ -155,7 +152,8 @@
                         trans: { x: zombieX, y: 5.8, z: zombieZ+5.0 },        
                         scale: { x: 1.0, y: 1.0, z: 1.0 }
                     }
-                },
+                }
+			]/*,
             //Zombie Legs
                 {
                     color: { r: 0.0, g: 0.0, b: 0.0 },           
@@ -463,15 +461,15 @@ function handleTextureLoaded(image, texture) {
   gl.bindTexture(gl.TEXTURE_2D, null);
 }*/
         // Display the objects. Now accounts for an arbitrary tree of subshapes with recursion.
-    drawSubshapes = function (composites) {        
-        for (i = 0; i < composites.length; ++i) {
+    drawSubshapes = function (objects) {        
+        for (i = 0; i < objects.length; ++i) {
         //    console.log("i-limit: ",composites.length); 
        //     console.log("i", i);
        //     console.log("com_len", composites[i].transforms.scale.x);
-            drawObject(composites[i]);
-            if (composites[i].subshapes) {
-                drawSubshapes(composites[i].subshapes);
-                //drawArray = drawArray.concat(composites[i].subshapes);
+            drawObject(objects[i]);
+            if (objects[i].subshapes) {
+                drawSubshapes(objects[i].subshapes);
+                //drawArray = drawArray.concat(objects[i].subshapes);
             }
      //       console.log("hereIII: ", i)
         } 
