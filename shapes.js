@@ -118,6 +118,8 @@ var Shapes = {
         var latitudeBands = 30,
             longitudeBands = 30,
             i,
+			Z = 0.25,
+			X = 0.5,
             vertexPositionData = [],
             indicePositionData = [];
         /*
@@ -152,8 +154,28 @@ var Shapes = {
                                    );    
         }
         return {
-            vertices: vertexPositionData,
-            indices: indicePositionData
+            vertices: [
+                [ -Z, 0.0, 0.0 ], //0
+                [ Z, 0.0, 0.0 ],  //1
+                [ -Z, X, 0.0 ], //2
+                [ Z, X, 0.0 ],  //3
+                [ Z, X, X ],      //4
+                [ -Z, X, X ],      //5
+                [ Z, 0.0, X ],   //6
+                [ -Z, 0.0, X ]].concat(vertexPositionData),
+            indices: [
+                [ 0, 1, 7 ],   //Front Face
+                [ 7, 2, 0 ],  
+                [ 1, 3, 4 ],  //Right Face
+                [ 4, 7, 1 ],  
+                [ 0, 2, 7 ],  //Left Face
+                [ 5, 2, 7 ],
+                [ 4, 16, 7 ],  //Back Face
+                [ 7, 5, 4 ],
+                [ 2, 5, 4 ],  //Top Face
+                [ 7, 3, 4 ],   
+                [ 0, 1, 6 ],  //Bottom Face
+                [ 0, 7, 6 ] ].concat(indicePositionData) 
         }
     },
 

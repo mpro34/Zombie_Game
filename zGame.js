@@ -116,7 +116,9 @@
     gl.enable(gl.DEPTH_TEST);
     gl.clearColor(0.0, 0.0, 0.0, 0.0);
     gl.viewport(0, 0, canvas.width, canvas.height);
-
+/*
+ * A.concat(B) another array of verticies into the head object.
+ */
 //Create the zombie...
     createZombie = function(zombieX, zombieZ) {
         var zombie = {
@@ -271,247 +273,57 @@
      //createWallSegment(50.0, 0.0, -0.6, 1.0, 15.0, 175.0, 1.0, 0.0, 0.0),  //Right Wall
 
 
-        createZombie(40.0, -100.0)          
-       
-       //0.0, 0.0, 0.0, 36.0, 15.0, 0.5
-
-      // createWallSegment(0, 0, 0, 36, 15, 0.5)
-    //Bottom U Structure (WALLS 1,2,3)        
-     /*   {
-            color: { r: 0.0, g: 0.0, b: 1.0 },          
-            specularColor: { r: 1.0, g: 0.0, b: 0.0 },
-            shininess: 25,  
-            vertices: Shapes.toRawTriangleArray(Shapes.hexahedron()),
-            normals: Shapes.toVertexNormalArray(Shapes.hexahedron()),
-            mode: gl.TRIANGLES,
-            transforms: {
-                trans: { x: 0.0, y: 0.0, z: 0.0 },        
-                scale: { x: 36.0, y: 15.0, z: 0.5 }
-            }
-        },
-        //3 subshapes
-            subshapes: [
-                {
-                    color: { r: 0.0, g: 0.0, b: 1.0 },
-                    vertices: Shapes.toRawTriangleArray(Shapes.hexahedron()),
-                    mode: gl.TRIANGLES,
-                    transforms: {
-                        trans: { x: 18.0, y: 0.0, z: -0.5 },         
-                        scale: { x: 0.5, y: 15.0, z: 18.0 }
-                    }
-                },
-                {
-                    color: { r: 0.0, g: 0.0, b: 1.0 },
-                    vertices: Shapes.toRawTriangleArray(Shapes.hexahedron()),
-                    mode: gl.TRIANGLES,
-                    transforms: {
-                        trans: { x: -18.0, y: 0.0, z: -0.5 },        
-                        scale: { x: 0.5, y: 15.0, z: 13.0 }
-                    },
-                    //A further nested subshape for testing.
-                    subshapes: [
-                    {
-                        color: { r: 1.0, g: 1.0, b: 0.0 },
-                        vertices: Shapes.toRawTriangleArray(Shapes.hexahedron()),
-                        mode: gl.TRIANGLES,
-                        transforms: {
-                            trans: { x: 0.0, y: 0.0, z: -180.0 },         
-                            scale: { x: 220.0, y: 100.0, z: 0.5 }
-                        }
-                    }
-                    ]
-                },                
-                {
-                    color: { r: 1.0, g: 0.0, b: 0.0 },
-                    vertices: Shapes.toRawTriangleArray(Shapes.hexahedron()),
-                    mode: gl.TRIANGLES,
-                    transforms: {
-                        trans: { x: -0.5, y: 0.0, z: -1.0 },        
-                        scale: { x: 0.5, y: 15.0, z: 10.0 }
-                    }
-                }
-            ]
-        },
-    //Inner U Structure (WALLS 4,5,6)
-        {
-            color: { r: 1.0, g: 0.0, b: 0.0 },
-            vertices: Shapes.toRawTriangleArray(Shapes.hexahedron()),
-            mode: gl.TRIANGLES,
-            transforms: {
-                trans: { x: -0.5, y: 0.0, z: -1.0 },        
-                scale: { x: 0.1, y: 15.0, z: 10.0 }  //x=.5
-            }
-        },
-        {
-            color: { r: 1.0, g: 0.0, b: 0.0 },
-            vertices: Shapes.toRawTriangleArray(Shapes.hexahedron()),
-            mode: gl.TRIANGLES,
-            transforms: {
-                trans: { x: 6.0, y: 0.0, z: -1.0 },         
-                scale: { x: 0.2, y: 15.0, z: 10.0 }  //x=1
-            }
-        },
-        {
-            color: { r: 1.0, g: 0.0, b: 0.0 },
-            vertices: Shapes.toRawTriangleArray(Shapes.hexahedron()),
-            mode: gl.TRIANGLES,
-            transforms: {
-                trans: { x: 0.23, y: 0.0, z: -20.0 },         
-                scale: { x: 0.3, y: 15.0, z: 0.5 } //x=12
-            }
-        },
-
-        //Top S Structure (WALLS 7,8,9,10)
-        {
-            color: { r: 0.0, g: 1.0, b: 0.0 },
-            vertices: Shapes.toRawTriangleArray(Shapes.hexahedron()),
-            mode: gl.TRIANGLES,
-            transforms: {
-                trans: { x: -10.0, y: 0.0, z: -1.5 },       
-                scale: { x: 0.4, y: 15.0, z: 7.0 }  //x=.5
-            },
-        //1 subshapes
-            subshapes: [
-                {
-                    color: { r: 0.0, g: 0.0, b: 1.0 },
-                    vertices: Shapes.toRawTriangleArray(Shapes.hexahedron()),
-                    mode: gl.TRIANGLES,
-                    transforms: {
-                        trans: { x: 18.0, y: 0.0, z: -0.5 },         
-                        scale: { x: 0.5, y: 15.0, z: 18.0 }
-                    }
-                }
-            ]
-        },
-         {
-            color: { r: 0.0, g: 1.0, b: 0.0 },
-            specularColor: { r: 1.0, g: 0.0, b: 0.0 },
-            shininess: 25,  
-            vertices: Shapes.toRawTriangleArray(Shapes.hexahedron()),
-            normals: Shapes.toVertexNormalArray(Shapes.hexahedron()),
-            mode: gl.TRIANGLES,
-            transforms: {
-                trans: { x: 0.0, y: 0.0, z: 0.0 },        
-                scale: { x: 200.0, y: 0.0, z: 220.0 }  //x=36
-            }
-        },
-        {
-            color: { r: 0.0, g: 1.0, b: 0.0 },
-            vertices: Shapes.toRawTriangleArray(Shapes.hexahedron()),
-            mode: gl.TRIANGLES,
-            transforms: {
-                trans: { x: 0.0, y: 0.0, z: -30.0 },        
-                scale: { x: 0.5, y: 15.0, z: 0.5 }  //x=36
-            }
-        },
-        {
-            color: { r: 0.0, g: 1.0, b: 0.0 },
-            vertices: Shapes.toRawTriangleArray(Shapes.hexahedron()),
-            mode: gl.TRIANGLES,
-            transforms: {
-                trans: { x: -1.0, y: 0.0, z: -11.0 },       
-                scale: { x: 0.6, y: 15.0, z: 1.0 }  //x=7
-            }
-        },
-        {
-            color: { r: 0.0, g: 1.0, b: 0.0 },
-            vertices: Shapes.toRawTriangleArray(Shapes.hexahedron()),
-            mode: gl.TRIANGLES,
-            transforms: {
-                trans: { x: -18.0, y: 0.0, z: -1.85 },         
-                scale: { x: 0.7, y: 15.0, z: 8.0 }  //x=0.5
-            }
-        },
-    //Outer Boundary Walls
-        {
-            color: { r: 1.0, g: 1.0, b: 0.0 },
-            vertices: Shapes.toRawTriangleArray(Shapes.hexahedron()),
-            mode: gl.TRIANGLES,
-            transforms: {
-                trans: { x: 0.0, y: 0.0, z: -180.0 },         
-                scale: { x: 0.8, y: 20.0, z: 0.5 }  //x=220
-            }
-        },
-        {
-            color: { r: 1.0, g: 1.0, b: 0.0 },
-            vertices: Shapes.toRawTriangleArray(Shapes.hexahedron()),
-            mode: gl.TRIANGLES,
-            transforms: {
-                trans: { x: 110.0, y: 0.0, z: -0.25 },         
-                scale: { x: 0.9, y: 20.0, z: 360.0 }  //x=0.5
-            }
-        },
-        {
-            color: { r: 1.0, g: 1.0, b: 0.0 },
-            vertices: Shapes.toRawTriangleArray(Shapes.hexahedron()),
-            mode: gl.TRIANGLES,
-            transforms: {
-                trans: { x: -110.0, y: 0.0, z: -0.25 },         
-                scale: { x: 1.0, y: 20.0, z: 360.0 }  //x=0.5
-            }
-        },
-        {
-            color: { r: 1.0, g: 1.0, b: 0.0 },
-            vertices: Shapes.toRawTriangleArray(Shapes.hexahedron()),
-            mode: gl.TRIANGLES,
-            transforms: {
-                trans: { x: 0.0, y: 0.0, z: 180.0 },         
-                scale: { x: 220.0, y: 20.0, z: 0.5 }
-            }
-        }*/
+        createZombie(0.0, -10.0)          
     ];
 /*****************************************************************************************************/
     // Pass the vertices and colors to WebGL.
-        passSubVerts = function (composites) {
-            for (i = 0, maxi = composites.length; i < maxi; i += 1) {
-                composites[i].buffer = GLSLUtilities.initVertexBuffer(gl,
-                    composites[i].vertices);
+            for (i = 0, maxi = objectsToDraw.length; i < maxi; i += 1) {
+                objectsToDraw[i].buffer = GLSLUtilities.initVertexBuffer(gl,
+                    objectsToDraw[i].vertices);
             //Create the default normal array in case of no lighting variables for current object.
                 // JD: Nice catch for avoiding normal vector errors, but at a cost---
                 //     most of your scene is not lit at all!  And to think that the
                 //     fix for this would be a single additional line per object.
                 //     (or less if you wrote a function like createWallSegment)
-                for (k = 0; maxk = composites[i].vertices.length, k < maxk; k += 1) {
+                for (k = 0; maxk = objectsToDraw[i].vertices.length, k < maxk; k += 1) {
                     normalArray.push(0.5);
                 }
             //If we have a single color, we expand that into an array of the same color over and over.
-                if (!composites[i].colors) {
-                    composites[i].colors = [];
-                    for (j = 0, maxj = composites[i].vertices.length / 3; j < maxj; j += 1) {
-                        composites[i].colors = composites[i].colors.concat(
-                            composites[i].color.r,
-                            composites[i].color.g,
-                            composites[i].color.b
+                if (!objectsToDraw[i].colors) {
+                    objectsToDraw[i].colors = [];
+                    for (j = 0, maxj = objectsToDraw[i].vertices.length / 3; j < maxj; j += 1) {
+                        objectsToDraw[i].colors = objectsToDraw[i].colors.concat(
+                            objectsToDraw[i].color.r,
+                            objectsToDraw[i].color.g,
+                            objectsToDraw[i].color.b
                         );
                     }
                 }  
-                composites[i].colorBuffer = GLSLUtilities.initVertexBuffer(gl,
-                    composites[i].colors);
+                objectsToDraw[i].colorBuffer = GLSLUtilities.initVertexBuffer(gl,
+                    objectsToDraw[i].colors);
                 
             //Same trick as above.
-                if (!composites[i].specularColors) {
-                    composites[i].specularColors = [];      
-                    for (j = 0, maxj = composites[i].vertices.length / 3; j < maxj; j += 1) {
-                        composites[i].specularColors = composites[i].specularColors.concat(
-                            (composites[i].specularColor ? composites[i].specularColor.r : 1.0),
-                            (composites[i].specularColor ? composites[i].specularColor.g : 1.0),
-                            (composites[i].specularColor ? composites[i].specularColor.b : 1.0)
+                if (!objectsToDraw[i].specularColors) {
+                    objectsToDraw[i].specularColors = [];      
+                    for (j = 0, maxj = objectsToDraw[i].vertices.length / 3; j < maxj; j += 1) {
+                        objectsToDraw[i].specularColors = objectsToDraw[i].specularColors.concat(
+                            (objectsToDraw[i].specularColor ? objectsToDraw[i].specularColor.r : 1.0),
+                            (objectsToDraw[i].specularColor ? objectsToDraw[i].specularColor.g : 1.0),
+                            (objectsToDraw[i].specularColor ? objectsToDraw[i].specularColor.b : 1.0)
                         );
                     }
-                    composites[i].specularBuffer = GLSLUtilities.initVertexBuffer(gl,
-                        composites[i].specularColors);
-                    composites[i].normalBuffer = GLSLUtilities.initVertexBuffer(gl,
-                        (composites[i].normals ? composites[i].normals : normalArray)); 
+                    objectsToDraw[i].specularBuffer = GLSLUtilities.initVertexBuffer(gl,
+                        objectsToDraw[i].specularColors);
+                    objectsToDraw[i].normalBuffer = GLSLUtilities.initVertexBuffer(gl,
+                        (objectsToDraw[i].normals ? objectsToDraw[i].normals : normalArray)); 
                 }
 
             //Save subshapes to be processed after all of the standard objects.
-                if (composites[i].subshapes) {
-                    subArray = subArray.concat(composites[i].subshapes);
+                if (objectsToDraw[i].subshapes) {
+                    subArray = subArray.concat(objectsToDraw[i].subshapes);
                 }
             }           
-        }; 
-        passSubVerts(objectsToDraw);
-        passSubVerts(subArray);//******Needs to be taken out and implemented another way.
+	//******Needs to be taken out and implemented another way.
 		/*ABOVE: Find another way to pass verticies and colors of subshapes.*/
 /*****************************************************************************************************/
     // Initialize the shaders.
@@ -549,7 +361,10 @@
      // Texture
    // textureCoordAttribute = gl.getAttribLocation(shaderProgram, "aTextureCoord");
   // gl.enableVertexAttribArray(textureCoordAttribute);
-    
+  
+ /* 
+  * The following links the GLSL Variables with new javascript variables. 
+  */   
     vertexPosition = gl.getAttribLocation(shaderProgram, "vertexPosition");
     gl.enableVertexAttribArray(vertexPosition);
     vertexDiffuseColor = gl.getAttribLocation(shaderProgram, "vertexDiffuseColor");
@@ -572,7 +387,8 @@
     shininess = gl.getUniformLocation(shaderProgram, "shininess");
 
     /*
-     * Displays an individual object.
+     * Displays an individual object. Creates the 4x4 matricies for translation, scale, and rotation.
+	 * The "object" that the drawObject function takes as an argument, has its trans and scale properties brought to webgl here.
      */
     drawObject = function (object) { 
     // Set the varying colors.
@@ -582,7 +398,10 @@
         gl.vertexAttribPointer(vertexSpecularColor, 3, gl.FLOAT, false, 0, 0);
         // Set the shininess.
         gl.uniform1f(shininess, object.shininess);
-
+/*
+ * Creates a new matrix with the newly created and linked javascript variables (i.e. translationMatrix)
+ * and sends matricies to the shaders.
+ */
         //Set up instance transforms.
         gl.uniformMatrix4fv(translationMatrix,
             gl.FALSE, new Float32Array(object.transforms.trans ?
