@@ -145,8 +145,8 @@
                     color: { r: 1.0, g: 0.0, b: 0.0 }, 
                     specularColor: { r: 1.0, g: 0.0, b: 0.0 },
                     shininess: 25,            
-                    vertices: Shapes.toRawTriangleArray(Shapes.sphere()),
-                    normals: Shapes.toVertexNormalArray(Shapes.sphere()),
+                    vertices: Shapes.toRawTriangleArray(Shapes.tetrahedron()),
+                    normals: Shapes.toVertexNormalArray(Shapes.tetrahedron()),
                     mode: gl.TRIANGLES,
                     transforms: {
                         trans: { x: zombieX, y: 5.8, z: zombieZ+5.0 },        
@@ -280,51 +280,59 @@
                 //     fix for this would be a single additional line per object.
                 //     (or less if you wrote a function like createWallSegment)
     // Pass the vertices and colors to WebGL.
-		var passVerticies = function(objects) {
-            for (i = 0, maxi = objects.length; i < maxi; i += 1) {
-                objects[i].buffer = GLSLUtilities.initVertexBuffer(gl,
-                    objects[i].vertices);
+	var ccount = 0;
+		var passVertices = function(objects) {
+                objects.buffer = GLSLUtilities.initVertexBuffer(gl,
+                    objects.vertices);
             //Create the default normal array in case of no lighting variables for current object.
-                for (k = 0; maxk = objects[i].vertices.length, k < maxk; k += 1) {
+                for (k = 0; maxk = objects.vertices.length, k < maxk; k += 1) {
                     normalArray.push(0.5);
                 }
             //If we have a single color, we expand that into an array of the same color over and over.
-                if (!objects[i].colors) {
-                    objects[i].colors = [];
-                    for (j = 0, maxj = objects[i].vertices.length / 3; j < maxj; j += 1) {
-                        objects[i].colors = objects[i].colors.concat(
-                            objects[i].color.r,
-                            objects[i].color.g,
-                            objects[i].color.b
+                if (!objects.colors) {
+                    objects.colors = [];
+                    for (j = 0, maxj = objects.vertices.length / 3; j < maxj; j += 1) {
+                        objects.colors = objects.colors.concat(
+                            objects.color.r,
+                            objects.color.g,
+                            objects.color.b
                         );
                     }
                 }  
-                objects[i].colorBuffer = GLSLUtilities.initVertexBuffer(gl,
-                    objects[i].colors);              
+                objects.colorBuffer = GLSLUtilities.initVertexBuffer(gl,
+                    objects.colors);              
             //Same trick as above.
-                if (!objects[i].specularColors) {
-                    objects[i].specularColors = [];      
-                    for (j = 0, maxj = objects[i].vertices.length / 3; j < maxj; j += 1) {
-                        objects[i].specularColors = objects[i].specularColors.concat(
-                            (objects[i].specularColor ? objects[i].specularColor.r : 1.0),
-                            (objects[i].specularColor ? objects[i].specularColor.g : 1.0),
-                            (objects[i].specularColor ? objects[i].specularColor.b : 1.0)
+                if (!objects.specularColors) {
+                    objects.specularColors = [];      
+                    for (j = 0, maxj = objects.vertices.length / 3; j < maxj; j += 1) {
+                        objects.specularColors = objects.specularColors.concat(
+                            (objects.specularColor ? objects.specularColor.r : 1.0),
+                            (objects.specularColor ? objects.specularColor.g : 1.0),
+                            (objects.specularColor ? objects.specularColor.b : 1.0)
                         );
                     }
-                    objects[i].specularBuffer = GLSLUtilities.initVertexBuffer(gl,
-                        objects[i].specularColors);
-                    objects[i].normalBuffer = GLSLUtilities.initVertexBuffer(gl,
-                        (objects[i].normals ? objects[i].normals : normalArray)); 
+                    objects.specularBuffer = GLSLUtilities.initVertexBuffer(gl,
+                        objects.specularColors);
+                    objects.normalBuffer = GLSLUtilities.initVertexBuffer(gl,
+                        (objects.normals ? objects.normals : normalArray)); 
                 }
+				ccount++
+		};
+		
+		
+        for (i = 0, maxi = objectsToDraw.length; i < maxi; i += 1) {
             //Recursively pass the vertices of the subshapes.
-                if (objects[i].subshapes) {
-					console.log("VERTICIES PASSED? " + objects[i].subshapes);
-                    passVerticies(objects[i].subshapes);
-                }
-            }    
+			console.log("VERTICIES? " + objectsToDraw[i].vertices);
+			    passVertices(objectsToDraw[i]);
+				
+                if (objectsToDraw[i].subshapes) {
+					console.log("VERTICIES PASSED? " + objectsToDraw[i].subshapes.vertices);
+          //          passVertices(objectsToDraw[i].subshapes);  //If ran - shows undefined for objects.vertices.length
+                }       
         };
 	//******Needs to be taken out and implemented another way.
-	    passVerticies(objectsToDraw)
+	 //   passVerticies(objectsToDraw)
+		console.log("COUNT: " + ccount);
 		/*ABOVE: Find another way to pass verticies and colors of subshapes.*/
 /*****************************************************************************************************/
     // Initialize the shaders.
