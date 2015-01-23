@@ -126,8 +126,8 @@
             color: { r: 0.0, g: 0.5, b: 0.0 },
             specularColor: { r: 1.0, g: 0.0, b: 0.0 },
             shininess: 25,  
-            vertices: Shapes.toRawTriangleArray(Shapes.hexahedron()),
-            normals: Shapes.toVertexNormalArray(Shapes.hexahedron()),
+            vertices: Shapes.toRawTriangleArray(Shapes.sphere()),
+            normals: Shapes.toVertexNormalArray(Shapes.sphere()),
             mode: gl.TRIANGLES,
             transforms: {
                 trans: { x: zombieX, y: 1.5, z: zombieZ },         
@@ -135,13 +135,19 @@
             },
             subshapes: [
             //Zombie Head
-                // JD: So here, you did find *a* solution to being able to
-                //     construct the zombie, but your code is not very
-                //     reusable.  As mentioned previously, what is lacking
-                //     is a full appreciation for the role that the *matrix*
-                //     produced by these properties can play in getting
-                //     "transform inheritance" to work.
                 {
+                    color: { r: 1.0, g: 0.0, b: 0.0 }, 
+                    specularColor: { r: 1.0, g: 0.0, b: 0.0 },
+                    shininess: 25,            
+                    vertices: Shapes.toRawTriangleArray(Shapes.sphere()),
+                    normals: Shapes.toVertexNormalArray(Shapes.sphere()),
+                    mode: gl.TRIANGLES,
+                    transforms: {
+                        trans: { x: zombieX, y: 5.8, z: zombieZ+5.0 },        
+                        scale: { x: 1.0, y: 1.0, z: 1.0 }
+                    }
+				},
+				{
                     color: { r: 1.0, g: 0.0, b: 0.0 }, 
                     specularColor: { r: 1.0, g: 0.0, b: 0.0 },
                     shininess: 25,            
@@ -149,11 +155,10 @@
                     normals: Shapes.toVertexNormalArray(Shapes.tetrahedron()),
                     mode: gl.TRIANGLES,
                     transforms: {
-                        trans: { x: zombieX, y: 5.8, z: zombieZ+5.0 },        
+                        trans: { x: zombieX, y: 10.8, z: zombieZ-5.0 },        
                         scale: { x: 1.0, y: 1.0, z: 1.0 }
                     }
-                }
-			]/*,
+			    },
             //Zombie Legs
                 {
                     color: { r: 0.0, g: 0.0, b: 0.0 },           
@@ -172,17 +177,17 @@
                         trans: { x: zombieX+0.5, y: 0.3, z: zombieZ },        
                         scale: { x: 2.0, y: 2.0, z: 2.0 }
                     },
-               /*     subshapes: [
+                    subshapes: [
                       {
-                    color: { r: 0.0, g: 0.0, b: 0.0 },           
-                    vertices: Shapes.toRawTriangleArray(Shapes.tetrahedron()),
-                    mode: gl.TRIANGLES,
-                    transforms: {
-                        trans: { x: zombieX+0.5, y: 0.3, z: zombieZ },        
-                        scale: { x: 23.0, y: 2.0, z: 2.0 }
-                    } 
+                        color: { r: 0.0, g: 0.0, b: 0.0 },           
+                        vertices: Shapes.toRawTriangleArray(Shapes.tetrahedron()),
+                        mode: gl.TRIANGLES,
+                        transforms: {
+                            trans: { x: zombieX+0.5, y: 0.3, z: zombieZ },        
+                            scale: { x: 23.0, y: 2.0, z: 2.0 }
+                        } 
                       }
-                      ]
+                    ]
                 },           
             //Zombie Arms
                 {
@@ -203,7 +208,7 @@
                         scale: { x: 5.0, y: 0.5, z: 0.5 }
                     } 
                 }
-            ] */   
+            ] 
         }
         return zombie;
     };
@@ -280,7 +285,6 @@
                 //     fix for this would be a single additional line per object.
                 //     (or less if you wrote a function like createWallSegment)
     // Pass the vertices and colors to WebGL.
-	var ccount = 0;
 		var passVertices = function(objects) {
                 objects.buffer = GLSLUtilities.initVertexBuffer(gl,
                     objects.vertices);
@@ -316,23 +320,24 @@
                     objects.normalBuffer = GLSLUtilities.initVertexBuffer(gl,
                         (objects.normals ? objects.normals : normalArray)); 
                 }
-				ccount++
 		};
 		
 		
         for (i = 0, maxi = objectsToDraw.length; i < maxi; i += 1) {
             //Recursively pass the vertices of the subshapes.
-			console.log("VERTICIES? " + objectsToDraw[i].vertices);
+			//console.log("no subs? " + objectsToDraw[i].vertices);
 			    passVertices(objectsToDraw[i]);
 				
                 if (objectsToDraw[i].subshapes) {
-					console.log("VERTICIES PASSED? " + objectsToDraw[i].subshapes.vertices);
-          //          passVertices(objectsToDraw[i].subshapes);  //If ran - shows undefined for objects.vertices.length
-                }       
+				//	console.log("sub:: " + objectsToDraw[i].subshapes.vertices);
+					for (var j = 0; j < objectsToDraw[i].subshapes.length; j++) {
+					 //   console.log("subshape " + objectsToDraw[i].subshapes[j].vertices);
+                      passVertices(objectsToDraw[i].subshapes[j]);  //If ran - shows undefined for objects.vertices.length
+                    }
+				}       
         };
 	//******Needs to be taken out and implemented another way.
 	 //   passVerticies(objectsToDraw)
-		console.log("COUNT: " + ccount);
 		/*ABOVE: Find another way to pass verticies and colors of subshapes.*/
 /*****************************************************************************************************/
     // Initialize the shaders.
@@ -478,11 +483,12 @@ function handleTextureLoaded(image, texture) {
         for (i = 0; i < objects.length; ++i) {    
 			drawObject(objects[i]);			
             if (objects[i].subshapes) {
-				console.log("Subs!");
-				console.log(objects[i].subshapes.trans);
-                drawObject(objects[i].subshapes);
-				console.log(objects[i].subshapes);
-              //  drawSubshapes(objects[i].subshapes);
+				for (var k = 0; k < objects[i].subshapes.length; k++) {
+				//    console.log("Subs!");
+			//	    console.log(objects[i].subshapes[k].trans);
+                    drawObject(objects[i].subshapes[k]);
+				//    console.log(objects[i].subshapes[k]);
+			    }
             }
         } 
     }; 
