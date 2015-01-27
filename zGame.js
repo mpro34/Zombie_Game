@@ -704,3 +704,4 @@ function handleTextureLoaded(image, texture) {
             drawScene();
         }, 200);
     });
+}(document.getElementById("space-scene")));
