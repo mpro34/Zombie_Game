@@ -18,10 +18,6 @@
     // are used.
     var gl, // The WebGL context.
 
-        // This variable stores 3D model information.
-        objectsToDraw,
-        sphereObject,
-
         // The shader program to use.
         shaderProgram,
 
@@ -29,21 +25,13 @@
         abort = false,
 
         // Important state variables.
-        currentRotation = 45.0,
-        currentInterval,
-        assignVerts, // JD: Good that you cleaned this up, but...also clean up
-                     //     the now-unused variable!
-        passSubVerts,
-        subArray = [],
-        drawArray = [],
         normalArray = [],
-        passTransforms,
 
         //Camera Variables
         cameraZ = 20.0, 
         cameraY = 3.0,
         cameraX = 0.0,
-        camPosition = new Vector(cameraX, cameraY, cameraZ),  /*******************************/
+        camPosition = new Vector(cameraX, cameraY, cameraZ),  
         cxPointer = 0.0,
         cyPointer = 3.0,
         czPointer = 0.0, 
@@ -93,12 +81,7 @@
         lightPosition,
         lightDiffuse,
         lightSpecular,
-
-        // An individual "draw object" function.
-        drawObject,
-
-        // The big "draw scene" function.
-        drawScene,
+        lightSpecular,
 
         // Reusable loop variables.
         i,
@@ -249,8 +232,6 @@
             }
 
         }
-     //   console.log("here", wallSegment[0].scale.x);
-
         return wallSegment;
     };
 
@@ -269,7 +250,7 @@
     //     modifying the child's transforms.  If you realized that you can
     //     pass the *matrices* for these transforms, things would have
     //     worked out better.
-    passTransforms = function (parent, child) {
+    var passTransforms = function (parent, child) {
         if (parent.transforms.trans) {
             child.transforms.trans.x += parent.transforms.trans.x;
             child.transforms.trans.y += parent.transforms.trans.y;
@@ -279,8 +260,7 @@
     };
 
     // Build the objects to display.
-    objectsToDraw = [
-    //Spawn the dead
+    var objectsToDraw = [
     // (transX, transY, transZ / scaleX, scaleY, scaleZ / colR, colG, colB)
         createWallSegment(100.0, 0.0, -0.3, 1.0, 25.0, 800.0, 0.0, 0.0, 1.0),  //Right Wall
         createWallSegment(-100.0, 0.0, -0.3, 1.0, 25.0, 800.0, 0.0, 0.0, 1.0),   //Left Wall
@@ -293,13 +273,10 @@
 
         createWallSegment(0.0, 0.0, -0.3, 400.0, 0.0, 800.0, 0.6, 0.5, 0.5),   //Building Floor
         createWallSegment(0.0, 25.0, -0.8, 400.0, 0.5, 333.0, 0.0, 1.0, 0.0),   //Building Ceiling
-     //createWallSegment(50.0, 0.0, -0.6, 1.0, 15.0, 175.0, 1.0, 0.0, 0.0),  //Right Wall
 
-
-        createZombie(-10.0, -10.0),          
-		createZombie(10.0, -10.0)
+        createZombie(-10.0, -30.0),          
+		createZombie(10.0, -30.0)
     ];
-/*****************************************************************************************************/
                 // JD: Nice catch for avoiding normal vector errors, but at a cost---
                 //     most of your scene is not lit at all!  And to think that the
                 //     fix for this would be a single additional line per object.
@@ -380,13 +357,6 @@
 
     // All done --- tell WebGL to use the shader program from now on.
     gl.useProgram(shaderProgram);
-
-    // Hold on to the important variables within the shaders. 
-/*******************************/
-    
-     // Texture
-   // textureCoordAttribute = gl.getAttribLocation(shaderProgram, "aTextureCoord");
-  // gl.enableVertexAttribArray(textureCoordAttribute);
   
  /* 
   * The following links the GLSL Variables with new javascript variables. 
@@ -416,7 +386,7 @@
      * Displays an individual object. Creates the 4x4 matrices for translation, scale, and rotation.
 	 * The "object" that the drawObject function takes as an argument, has its trans and scale properties brought to webgl here.
      */
-    drawObject = function (object) { 
+    var drawObject = function (object) { 
     // Set the varying colors.
         gl.bindBuffer(gl.ARRAY_BUFFER, object.colorBuffer);
         gl.vertexAttribPointer(vertexDiffuseColor, 3, gl.FLOAT, false, 0, 0); 
@@ -467,26 +437,8 @@
         gl.vertexAttribPointer(vertexPosition, 3, gl.FLOAT, false, 0, 0);  
         gl.drawArrays(object.mode, 0, object.vertices.length/3);
     };
-
-  /*  function initTextures() {
-  cubeTexture = gl.createTexture();
-  cubeImage = new Image();
-  cubeImage.onload = function() { handleTextureLoaded(cubeImage, cubeTexture); }
-  cubeImage.src = "cubetexture.jpg";
-}
-
-function handleTextureLoaded(image, texture) {
-  console.log("handleTextureLoaded, image = " + image);
-  gl.bindTexture(gl.TEXTURE_2D, texture);
-  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA,
-        gl.UNSIGNED_BYTE, image);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_NEAREST);
-  gl.generateMipmap(gl.TEXTURE_2D);
-  gl.bindTexture(gl.TEXTURE_2D, null);
-}*/
-        // Display the objects. Now accounts for an arbitrary tree of subshapes with recursion.
-    drawSubshapes = function (objects) {   
+    // Display the objects. Now accounts for an arbitrary tree of subshapes with recursion.
+    var drawSubshapes = function (objects) {   
         for (i = 0; i < objects.length; ++i) {    
 			drawObject(objects[i]);			
             if (objects[i].subshapes) {
@@ -500,7 +452,7 @@ function handleTextureLoaded(image, texture) {
     /*
      * Displays the scene.
      */
-    drawScene = function () {
+    var drawScene = function () {
         // Clear the display.
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
@@ -520,46 +472,6 @@ function handleTextureLoaded(image, texture) {
                 Matrix4x4.frustum(5, -3, -5, 5, 10, 1000).toWebGLArray()
             )
         );
-/*
-          cubeVerticesTextureCoordBuffer = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, cubeVerticesTextureCoordBuffer);
-  
-  var textureCoordinates = [
-    // Front
-    0.0,  0.0,
-    1.0,  0.0,
-    1.0,  1.0,
-    0.0,  1.0,
-    // Back
-    0.0,  0.0,
-    1.0,  0.0,
-    1.0,  1.0,
-    0.0,  1.0,
-    // Top
-    0.0,  0.0,
-    1.0,  0.0,
-    1.0,  1.0,
-    0.0,  1.0,
-    // Bottom
-    0.0,  0.0,
-    1.0,  0.0,
-    1.0,  1.0,
-    0.0,  1.0,
-    // Right
-    0.0,  0.0,
-    1.0,  0.0,
-    1.0,  1.0,
-    0.0,  1.0,
-    // Left
-    0.0,  0.0,
-    1.0,  0.0,
-    1.0,  1.0,
-    0.0,  1.0
-  ];
-
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoordinates),
-                gl.STATIC_DRAW);
-*/
 
         drawSubshapes(objectsToDraw);
      
@@ -577,7 +489,7 @@ function handleTextureLoaded(image, texture) {
 
     $("body").keydown(function(event) {
         if (event.keyCode === 38  || event.keyCode === 87) {  //Up key
-            cameraX += ((camPointer.subtract(camPosition)).unit()).x();   /*********************************************/
+            cameraX += ((camPointer.subtract(camPosition)).unit()).x();   
             cxPointer += ((camPointer.subtract(camPosition)).unit()).x();
             cameraZ += ((camPointer.subtract(camPosition)).unit()).z();
             czPointer += ((camPointer.subtract(camPosition)).unit()).z();
@@ -591,7 +503,7 @@ function handleTextureLoaded(image, texture) {
             udEvent = true;
 
         } else if (event.keyCode === 40 || event.keyCode === 83) {  //Down key
-            cameraX -= ((camPointer.subtract(camPosition)).unit()).x();   /*********************************************/
+            cameraX -= ((camPointer.subtract(camPosition)).unit()).x();  
             cxPointer -= ((camPointer.subtract(camPosition)).unit()).x();
             cameraZ -= ((camPointer.subtract(camPosition)).unit()).z();
             czPointer -= ((camPointer.subtract(camPosition)).unit()).z();
@@ -626,14 +538,14 @@ function handleTextureLoaded(image, texture) {
         if (lrEvent) {
             lrEvent = false;
             alphaRads = alpha * Math.PI / 180.0; //Radians value of alpha
-            cxPointer = cameraX + viewRadius * Math.sin( alphaRads );  /*********************************************/
+            cxPointer = cameraX + viewRadius * Math.sin( alphaRads );  
             czPointer = cameraZ - viewRadius * Math.cos( alphaRads );
             drawScene();
             event.preventDefault();
         }
             
         //Reinitialize camera position vector and camera pointer vectors with new values...
-        camPosition = new Vector(cameraX, cameraY, cameraZ);                      /*********************************************/
+        camPosition = new Vector(cameraX, cameraY, cameraZ);                 
         camPointer = new Vector(cxPointer, cyPointer, czPointer);            
     });
 	
@@ -662,46 +574,29 @@ function handleTextureLoaded(image, texture) {
 			zombieLocation = new Vector (zX, 0.0, zZ)
 		}
 	}
-
+var tooClose = false;
 //Runs when the user clicks the screen...
-    $(canvas).click(function () {
+   // $(canvas).click(function () {
 //Convert to requestAnimationFrame - this will enable a smoother animation!!!
         main = setInterval(function () {
-     /*       if ((Math.floor(zombieLocation.x())) != Math.floor(cameraX)) {
-                objectsToDraw[0].transforms.trans.x += 
-                ((camPosition.subtract(zombieLocation)).unit()).x() / objectsToDraw[0].transforms.scale.x;
-                for (i = 0; i < objectsToDraw[0].subshapes.length; i += 1) {
-                    objectsToDraw[0].subshapes[i].transforms.trans.x += 
-                        ((camPosition.subtract( zombieLocation )).unit()).x() / 
-                            objectsToDraw[0].subshapes[i].transforms.scale.x;
-                }
-
-            } else if ((Math.floor(zombieLocation.z())) != Math.floor(cameraZ-5)) {
-                objectsToDraw[0].transforms.trans.z += 
-                ((camPosition.subtract(zombieLocation)).unit()).z() / objectsToDraw[0].transforms.scale.z;
-                for (i = 0; i < objectsToDraw[0].subshapes.length; i += 1) {
-                    objectsToDraw[0].subshapes[i].transforms.trans.z +=
-                        ((camPosition.subtract( zombieLocation )).unit()).z() /
-                            objectsToDraw[0].subshapes[i].transforms.scale.z;
-                }
-
-            } else {
-                clearInterval(main);        //If zombie arrives at the location of the camera, he/she gets eaten.
-                var r = confirm("You are Dead...Try Again?");
-                if (r) {
-                    location.reload();
-                } else {
-                    return;
-                }
-            }
-            zombieLocation = new Vector (zombieX, 0.0, zombieZ);*/
 			//Need to update the actual vertices, NOT the zX and zZ values. These are only used when the objectsToDraw array is created.
 			//(which is a while up the code)
-			//ADD CODE HERE: Zombie are stationary, if camPosition is <= 10 units from any zombie, the zombies start moving. If farther, they stop.
-			console.log(getDistance(0,10,-10,0));
-			console.log("animating!");
-			animate();
+			//ADD CODE HERE: Zombies are stationary, if camPosition is <= 10 units from any zombie, the zombies start moving. If farther, they stop.
+			for (var i = 0; i < objectsToDraw.length; i++) {
+				console.log("here3");
+				if (objectsToDraw[i].undead) {
+					console.log("here");
+					if (getDistance(objectsToDraw[i].transforms.trans.x, objectsToDraw[i].transforms.trans.z,
+					camPosition.x(),camPosition.z()) < 10) {
+						tooClose = true;
+					}
+				}
+			}
+			if (tooClose) { animate() };
+//			console.log("animating!");
+//			animate();
+            console.log("here2");
             drawScene();
         }, 200);
-    });
+   // });
 }(document.getElementById("space-scene")));
