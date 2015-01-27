@@ -1,7 +1,15 @@
 /*
  * For maximum modularity, we place everything within a single function that
  * takes the canvas that it will need.
- */
+ */ 
+
+/*Things to work on:
+1. Get sphere subshapes to display and improve upon the literal zombie object code.
+2. Create animation for the zombies.
+3. Create a sort of AI, that would react if camera get within X distance away from any zombie.
+4. Each zombie should have their own location values and be able to move separately.
+5.Implement textures for objects.
+*/
 
 (function (canvas) {
 
@@ -49,8 +57,8 @@
 
         //Zombie Variables
         zombieLocation = new Vector(0.0, 0.0, 5.0),  
-        zombieX = 0.0,
-        zombieZ = 0.0,
+        zX = 0.0,
+        zZ = 0.0,
 
         transX = 0.0,
         transY = 0.0,
@@ -116,53 +124,53 @@
     gl.enable(gl.DEPTH_TEST);
     gl.clearColor(0.0, 0.0, 0.0, 0.0);
     gl.viewport(0, 0, canvas.width, canvas.height);
-/*
- * A.concat(B) another array of verticies into the head object.
- */
 //Create the zombie...
+//Try to clean up the zombie object code, so that not so many subshapes.
     createZombie = function(zombieX, zombieZ) {
         var zombie = {
         //Zombie Body
-            color: { r: 0.0, g: 0.5, b: 0.0 },
+            color: { r: 1.0, g: 0.0, b: 0.0 },
             specularColor: { r: 1.0, g: 0.0, b: 0.0 },
             shininess: 25,  
             vertices: Shapes.toRawTriangleArray(Shapes.sphere()),
             normals: Shapes.toVertexNormalArray(Shapes.sphere()),
             mode: gl.TRIANGLES,
+			undead: true,
             transforms: {
-                trans: { x: zombieX, y: 1.5, z: zombieZ },         
-                scale: { x: 2.0, y: 2.0, z: 2.0 }
+                trans: { x: zombieX, y: 5.0, z: zombieZ },         
+                scale: { x: 1.0, y: 1.0, z: 1.0 }
             },
             subshapes: [
             //Zombie Head
                 {
-                    color: { r: 1.0, g: 0.0, b: 0.0 }, 
-                    specularColor: { r: 1.0, g: 0.0, b: 0.0 },
+                    color: { r: 1.0, g: 1.0, b: 0.0 }, 
+                    specularColor: { r: 1.0, g: 1.0, b: 0.0 },
                     shininess: 25,            
-                    vertices: Shapes.toRawTriangleArray(Shapes.sphere()),
-                    normals: Shapes.toVertexNormalArray(Shapes.sphere()),
+                    vertices: Shapes.toRawTriangleArray(Shapes.hexahedron()),
+                    normals: Shapes.toVertexNormalArray(Shapes.hexahedron()),
                     mode: gl.TRIANGLES,
                     transforms: {
-                        trans: { x: zombieX, y: 5.8, z: zombieZ+5.0 },        
-                        scale: { x: 1.0, y: 1.0, z: 1.0 }
+                        trans: { x: zombieX, y: 0.0, z: zombieZ },        
+                        scale: { x: 1.0, y: 10.0, z: 1.0 }
                     }
 				},
 				{
-                    color: { r: 1.0, g: 0.0, b: 0.0 }, 
-                    specularColor: { r: 1.0, g: 0.0, b: 0.0 },
+                    color: { r: 1.0, g: 0.0, b: 1.0 }, 
+                    specularColor: { r: 1.0, g: 0.0, b: 1.0 },
                     shininess: 25,            
                     vertices: Shapes.toRawTriangleArray(Shapes.tetrahedron()),
                     normals: Shapes.toVertexNormalArray(Shapes.tetrahedron()),
                     mode: gl.TRIANGLES,
                     transforms: {
-                        trans: { x: zombieX, y: 10.8, z: zombieZ-5.0 },        
+                        trans: { x: zombieX, y: 2.5, z: zombie-0.1 },        
                         scale: { x: 1.0, y: 1.0, z: 1.0 }
                     }
-			    },
+			    }/*,
             //Zombie Legs
                 {
                     color: { r: 0.0, g: 0.0, b: 0.0 },           
                     vertices: Shapes.toRawTriangleArray(Shapes.tetrahedron()),
+					normals: Shapes.toVertexNormalArray(Shapes.tetrahedron()),
                     mode: gl.TRIANGLES,
                     transforms: {
                         trans: { x: zombieX-0.5, y: 0.3, z: zombieZ },        
@@ -172,6 +180,7 @@
                 {
                     color: { r: 0.0, g: 0.0, b: 0.0 },           
                     vertices: Shapes.toRawTriangleArray(Shapes.tetrahedron()),
+					normals: Shapes.toVertexNormalArray(Shapes.tetrahedron()),
                     mode: gl.TRIANGLES,
                     transforms: {
                         trans: { x: zombieX+0.5, y: 0.3, z: zombieZ },        
@@ -180,7 +189,8 @@
                     subshapes: [
                       {
                         color: { r: 0.0, g: 0.0, b: 0.0 },           
-                        vertices: Shapes.toRawTriangleArray(Shapes.tetrahedron()),
+                        vertices: Shapes.toRawTriangleArray(Shapes.sphere()),
+						normals: Shapes.toVertexNormalArray(Shapes.sphere()),
                         mode: gl.TRIANGLES,
                         transforms: {
                             trans: { x: zombieX+0.5, y: 0.3, z: zombieZ },        
@@ -193,6 +203,7 @@
                 {
                     color: { r: 0.1, g: 0.0, b: 0.0 },           
                     vertices: Shapes.toRawTriangleArray(Shapes.hexahedron()),
+					normals: Shapes.toVertexNormalArray(Shapes.hexahedron()),
                     mode: gl.TRIANGLES,
                     transforms: {
                         trans: { x: zombieX-0.5, y: 6.0, z: zombieZ+13.0 },        
@@ -202,13 +213,21 @@
                 {
                     color: { r: 0.1, g: 0.0, b: 0.0 },           
                     vertices: Shapes.toRawTriangleArray(Shapes.hexahedron()),
+					normals: Shapes.toVertexNormalArray(Shapes.hexahedron()),
                     mode: gl.TRIANGLES,
                     transforms: {
                         trans: { x: zombieX+0.5, y: 6.0, z: zombieZ+13.0 },        
                         scale: { x: 5.0, y: 0.5, z: 0.5 }
                     } 
                 }
-            ] 
+            ],
+			//Function that should move zombie object a certain x and y distance.
+            move: function(xVal,zVal) {
+				this.zX += xVal;
+				this.zZ += zVal;
+				
+			}*/	
+            ]			
         }
         return zombie;
     };
@@ -223,6 +242,7 @@
             vertices: Shapes.toRawTriangleArray(Shapes.hexahedron()),
             normals: Shapes.toVertexNormalArray(Shapes.hexahedron()),
             mode: gl.TRIANGLES,
+			undead: false,
             transforms: {
                 trans: { x: transX, y: transY, z: transZ },         
                 scale: { x: scaleX, y: scaleY, z: scaleZ }
@@ -276,7 +296,7 @@
      //createWallSegment(50.0, 0.0, -0.6, 1.0, 15.0, 175.0, 1.0, 0.0, 0.0),  //Right Wall
 
 
-        createZombie(0.0, -10.0),          
+        createZombie(-10.0, -10.0),          
 		createZombie(10.0, -10.0)
     ];
 /*****************************************************************************************************/
@@ -284,7 +304,7 @@
                 //     most of your scene is not lit at all!  And to think that the
                 //     fix for this would be a single additional line per object.
                 //     (or less if you wrote a function like createWallSegment)
-    // Pass the vertices and colors to WebGL.
+    // Pass the vertices, colors, and now specular colors to WebGL.
 		var passVertices = function(objects) {
                 objects.buffer = GLSLUtilities.initVertexBuffer(gl,
                     objects.vertices);
@@ -322,24 +342,16 @@
                 }
 		};
 		
-		
-        for (i = 0, maxi = objectsToDraw.length; i < maxi; i += 1) {
-            //Recursively pass the vertices of the subshapes.
-			//console.log("no subs? " + objectsToDraw[i].vertices);
-			    passVertices(objectsToDraw[i]);
-				
+	    //Recursively pass the vertices of the subshapes.	
+        for (i = 0, maxi = objectsToDraw.length; i < maxi; i += 1) {            
+			    passVertices(objectsToDraw[i]);			
                 if (objectsToDraw[i].subshapes) {
-				//	console.log("sub:: " + objectsToDraw[i].subshapes.vertices);
 					for (var j = 0; j < objectsToDraw[i].subshapes.length; j++) {
-					 //   console.log("subshape " + objectsToDraw[i].subshapes[j].vertices);
-                      passVertices(objectsToDraw[i].subshapes[j]);  //If ran - shows undefined for objects.vertices.length
+                      passVertices(objectsToDraw[i].subshapes[j]);
                     }
 				}       
         };
-	//******Needs to be taken out and implemented another way.
-	 //   passVerticies(objectsToDraw)
-		/*ABOVE: Find another way to pass verticies and colors of subshapes.*/
-/*****************************************************************************************************/
+
     // Initialize the shaders.
     shaderProgram = GLSLUtilities.initSimpleShaderProgram(
         gl,
@@ -401,20 +413,20 @@
     shininess = gl.getUniformLocation(shaderProgram, "shininess");
 
     /*
-     * Displays an individual object. Creates the 4x4 matricies for translation, scale, and rotation.
+     * Displays an individual object. Creates the 4x4 matrices for translation, scale, and rotation.
 	 * The "object" that the drawObject function takes as an argument, has its trans and scale properties brought to webgl here.
      */
     drawObject = function (object) { 
     // Set the varying colors.
         gl.bindBuffer(gl.ARRAY_BUFFER, object.colorBuffer);
-        gl.vertexAttribPointer(vertexDiffuseColor, 3, gl.FLOAT, false, 0, 0); //HERE
+        gl.vertexAttribPointer(vertexDiffuseColor, 3, gl.FLOAT, false, 0, 0); 
         gl.bindBuffer(gl.ARRAY_BUFFER, object.specularBuffer);
-        gl.vertexAttribPointer(vertexSpecularColor, 3, gl.FLOAT, false, 0, 0);  //HERE
+        gl.vertexAttribPointer(vertexSpecularColor, 3, gl.FLOAT, false, 0, 0);  
         // Set the shininess.
         gl.uniform1f(shininess, object.shininess);
 /*
  * Creates a new matrix with the newly created and linked javascript variables (i.e. translationMatrix)
- * and sends matricies to the shaders.
+ * and sends matrices to the shaders.
  */
         //Set up instance transforms.
         gl.uniformMatrix4fv(translationMatrix,
@@ -447,20 +459,15 @@
                 new Matrix4x4().toWebGLArray()
             )
         );
-/*****************************************************************************************************/
         // Set the varying normal vectors.
         gl.bindBuffer(gl.ARRAY_BUFFER, object.normalBuffer);
-        gl.vertexAttribPointer(normalVector, 3, gl.FLOAT, false, 0, 0);  //HERE
-
+        gl.vertexAttribPointer(normalVector, 3, gl.FLOAT, false, 0, 0);  
         // Set the varying vertex coordinates.
         gl.bindBuffer(gl.ARRAY_BUFFER, object.buffer);
-        gl.vertexAttribPointer(vertexPosition, 3, gl.FLOAT, false, 0, 0);  //HERE
-/*Constructs a sequence of geometric primitives by successively transferring elements
-	first through first + count − 1 of each enabled array to the GL.*/
+        gl.vertexAttribPointer(vertexPosition, 3, gl.FLOAT, false, 0, 0);  
         gl.drawArrays(object.mode, 0, object.vertices.length/3);
     };
-	/*ABOVE: Normal array property for each object. Line 470 JD Comment
-/*****************************************************************************************************/
+
   /*  function initTextures() {
   cubeTexture = gl.createTexture();
   cubeImage = new Image();
@@ -484,10 +491,7 @@ function handleTextureLoaded(image, texture) {
 			drawObject(objects[i]);			
             if (objects[i].subshapes) {
 				for (var k = 0; k < objects[i].subshapes.length; k++) {
-				//    console.log("Subs!");
-			//	    console.log(objects[i].subshapes[k].trans);
                     drawObject(objects[i].subshapes[k]);
-				//    console.log(objects[i].subshapes[k]);
 			    }
             }
         } 
@@ -558,8 +562,6 @@ function handleTextureLoaded(image, texture) {
 */
 
         drawSubshapes(objectsToDraw);
-      //  console.log("OtD", objectsToDraw[12]);
-        //drawSubshapes(drawArray);
      
         // All done.
         gl.flush();
@@ -634,11 +636,36 @@ function handleTextureLoaded(image, texture) {
         camPosition = new Vector(cameraX, cameraY, cameraZ);                      /*********************************************/
         camPointer = new Vector(cxPointer, cyPointer, czPointer);            
     });
+	
+	//Function for finding the distance between two points (the zombies and the camera position).
+	var getDistance = function(x1,y1,x2,y2) {
+		return Math.sqrt(Math.pow((x1-y1),2) + Math.pow((x2-y2),2));
+	}
+	
+	// Assigns randomly generated translation values to the zombie objects and subshapes from -1 to 1.
+	var animate = function() {
+		for (var i = 0; i < objectsToDraw.length; i++) {
+			var randX = Math.random() * 2 - 1
+			var randZ = Math.random() * 2 - 1
+			if (objectsToDraw[i].undead) {
+				objectsToDraw[i].transforms.trans.x += randX;
+				objectsToDraw[i].transforms.trans.z += randZ;
+				if (objectsToDraw[i].subshapes) {
+				    for (var j = 0; j < objectsToDraw[i].subshapes.length; j++) {
+					    objectsToDraw[i].subshapes[j].transforms.trans.x += randX;
+				        objectsToDraw[i].subshapes[j].transforms.trans.z += randZ;
+				    }
+			    }
+			}
+			var zX = zX + randX;
+			var zZ = zZ + randZ;
+			zombieLocation = new Vector (zX, 0.0, zZ)
+		}
+	}
 
 //Runs when the user clicks the screen...
     $(canvas).click(function () {
-        //Updates the x and z translation values of each object and subshape. Does the job, but I know the same 
-        //function can be executed a lot smoother and cleaner...     
+//Convert to requestAnimationFrame - this will enable a smoother animation!!!
         main = setInterval(function () {
      /*       if ((Math.floor(zombieLocation.x())) != Math.floor(cameraX)) {
                 objectsToDraw[0].transforms.trans.x += 
@@ -668,7 +695,12 @@ function handleTextureLoaded(image, texture) {
                 }
             }
             zombieLocation = new Vector (zombieX, 0.0, zombieZ);*/
+			//Need to update the actual vertices, NOT the zX and zZ values. These are only used when the objectsToDraw array is created.
+			//(which is a while up the code)
+			//ADD CODE HERE: Zombie are stationary, if camPosition is <= 10 units from any zombie, the zombies start moving. If farther, they stop.
+			console.log(getDistance(0,10,-10,0));
+			console.log("animating!");
+			animate();
             drawScene();
-        }, 100);
+        }, 200);
     });
-}(document.getElementById("space-scene")));
