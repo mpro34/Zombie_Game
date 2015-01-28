@@ -265,16 +265,22 @@
         createWallSegment(100.0, 0.0, -0.3, 1.0, 25.0, 800.0, 0.0, 0.0, 1.0),  //Right Wall
         createWallSegment(-100.0, 0.0, -0.3, 1.0, 25.0, 800.0, 0.0, 0.0, 1.0),   //Left Wall
         createWallSegment(0.0, 0.0, 150.0, 400.0, 25.0, 1.0, 0.0, 0.0, 1.0),    //Back Wall
-
         createWallSegment(0.1, 0.0, -180.0, 450.0, 25.0, 1.0, 0.0, 0.0, 1.0),    //Front Wall
         createWallSegment(0.3, 0.0, -100.0, 200.0, 25.0, 1.0, 0.0, 0.5, 1.0),    //Front Wall Right half
         createWallSegment(-0.3, 0.0, -100.0, 200.0, 25.0, 1.0, 0.0, 0.5, 1.0),    //Front Wall Left half
         createWallSegment(0.0, 0.0, -230.0, 400.0, 25.0, 1.0, 0.0, 0.0, 1.0),    //Front Wall 3
-
         createWallSegment(0.0, 0.0, -0.3, 400.0, 0.0, 800.0, 0.6, 0.5, 0.5),   //Building Floor
         createWallSegment(0.0, 25.0, -0.8, 400.0, 0.5, 333.0, 0.0, 1.0, 0.0),   //Building Ceiling
-
-        createZombie(-10.0, -30.0),          
+		
+        createZombie(35.0, 60.0),          
+		createZombie(0.0, 110.0),
+		createZombie(0.0, -70.0),          
+		createZombie(-30.0, 60.0),
+		createZombie(-20.0, -150.0),          
+		createZombie(25.0, -85.0),
+		createZombie(25.0, 120.0),          
+		createZombie(-20.0, -120.0),
+		createZombie(-10.0, -30.0),          
 		createZombie(10.0, -30.0)
     ];
                 // JD: Nice catch for avoiding normal vector errors, but at a cost---
@@ -551,7 +557,7 @@
 	
 	//Function for finding the distance between two points (the zombies and the camera position).
 	var getDistance = function(x1,y1,x2,y2) {
-		return Math.sqrt(Math.pow((x1-y1),2) + Math.pow((x2-y2),2));
+		return Math.sqrt(Math.pow((x2-x1),2) + Math.pow((y2-y1),2));
 	}
 	
 	// Assigns randomly generated translation values to the zombie objects and subshapes from -1 to 1.
@@ -583,16 +589,24 @@ var tooClose = false;
 			//(which is a while up the code)
 			//ADD CODE HERE: Zombies are stationary, if camPosition is <= 10 units from any zombie, the zombies start moving. If farther, they stop.
 			for (var i = 0; i < objectsToDraw.length; i++) {
-				console.log("here3");
 				if (objectsToDraw[i].undead) {
-					console.log("here");
+				//	console.log("x: " + objectsToDraw[i].transforms.trans.x);
+				//	console.log("z: " + objectsToDraw[i].transforms.trans.z);
+					console.log("xCA: " + camPosition.x());
+					console.log("zCA: " + camPosition.z());
+					console.log(getDistance(objectsToDraw[i].transforms.trans.x, objectsToDraw[i].transforms.trans.z,
+					camPosition.x(),camPosition.z()));
 					if (getDistance(objectsToDraw[i].transforms.trans.x, objectsToDraw[i].transforms.trans.z,
-					camPosition.x(),camPosition.z()) < 10) {
+					camPosition.x(),camPosition.z()) < 21) {
+						console.log("<30");
 						tooClose = true;
 					}
 				}
 			}
-			if (tooClose) { animate() };
+			if (tooClose == true) { 
+			    console.log("Animated");
+				animate() 
+			};
 //			console.log("animating!");
 //			animate();
             console.log("here2");
