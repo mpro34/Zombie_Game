@@ -16,7 +16,7 @@
         </canvas>
 
         <!-- jQuery makes some things more convenient. -->
-        <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+        <script src="https://code.jquery.com/jquery-latest.min.js"></script>
 
         <!-- GLSLUtilities is a starting point for holding functionality that
              is common to many WebGL programs. -->
@@ -51,13 +51,13 @@
 
             uniform vec4 lightPosition;
 
-            uniform mat4 rotationMatrix; 
-            uniform mat4 projectionMatrix; 
-            uniform mat4 translationMatrix; 
+            uniform mat4 rotationMatrix;
+            uniform mat4 projectionMatrix;
+            uniform mat4 translationMatrix;
             uniform mat4 scaleMatrix;
             uniform mat4 cameraMatrix;
 
-            void main(void) { 
+            void main(void) {
                 fragmentNormal = normalVector;
                 fragmentEye = vertexPosition;
                 fragmentLight = lightPosition.xyz;
@@ -131,11 +131,10 @@
             }
         </script>
         <!-- Implement a vector library of function -->
-        <script src="../Zombie_Game/matrix4x4/vector/vector.js"></script>
+        <script src="./matrix4x4/vector/vector.js"></script>
         <!-- Set up matrix library -->
-        <script src="../Zombie_Game/matrix4x4/matrix4x4.js"></script>
+        <script src="./matrix4x4/matrix4x4.js"></script>
         <!-- This script sets up the specific scene for this page. -->
         <script src="zGame.js"></script>
   </body>
 </html>
-
